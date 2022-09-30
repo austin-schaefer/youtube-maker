@@ -1,23 +1,18 @@
 #!/bin/bash
 
-# Requirements:
-# All *.jpg files are cards, and all cards are default Scryfall
-# Background image is called background.png and is 2560x1440
-
 # Create export directory
-mkdir exports
+mkdir export_images
+
+# Instantiate filenames variable
+filenames=1
 
 # Loop through images and merge
-for i in *.jpg
+for input_image in ./card_images/*.png
 do
-    printf "Converting $i...\n"
-    magick composite -geometry +1596+152 $i background.png exports/$i.png
+    printf "Converting $input_image...\n"
+    magick composite -geometry +1632+200 $input_image background.png export_images/$filenames.png
+    let filenames=filenames+1
 done
-
-# Rename images
-printf "Renaming files"
-cd exports
-rename -v 's/.jpg././' *.png
 
 # Done
 printf "All thumbnails created"
