@@ -13,7 +13,7 @@
 2. Add your audio source file with the name `input.mp4a` to the base directory
 3. Download card images and convert
     + Pass in your Scryfall search wrapped in double quotes
-    + For example `download_images.sh "e=chk c=w"`
+    + For example `zsh download_images.sh "e=chk c=w"`
 4. Move the exported images into the base directory
 5. Copy any other images (intro art, tiers, outro art, etc) into the base directory
 6. Customize the input file with timestamps:
