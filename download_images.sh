@@ -32,7 +32,7 @@ do
     # Create variable to set same filename as source image
     export_filename=$(printf "$input_image" | sed 's@./card_images/@@')
     # printf "    $export_filename\n"
-    magick composite -geometry +1632+200 $input_image background.png export_images/$export_filename
+    magick composite -geometry +1632+200 $input_image card_background.png export_images/$export_filename
     printf "    Converted $input_image...\n"
 done
 
