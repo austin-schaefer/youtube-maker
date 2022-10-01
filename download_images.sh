@@ -9,15 +9,16 @@ python3 scry $1 --print="%{image_uris.png}" > tmp.txt
 printf "SUCCESS: Got list of card images\n"
 
 # Instantiate variable for card filenames
-card_filenames=1
+count=1
 
 # Download images of all cards
 for card_image in "${(@f)"$(<tmp.txt)"}"
 {
   sleep 0.11
-  wget -q -O ./card_images/$card_filenames.png $card_image
-  printf "    Downloaded $card_image - $card_filenames\n"
-  let card_filenames=card_filenames+1
+  printf -v card_numbers "%05d" $count
+  wget -q -O ./card_images/$card_numbers.png $card_image
+  printf "    Downloaded $card_image - $card_numbers\n"
+  let count=count+1
 }
 
 # Cleanup tmp.txt and update status
