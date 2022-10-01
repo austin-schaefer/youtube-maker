@@ -7,7 +7,7 @@
 + rename
 + wget
 
-# Instructions
+## Instructions
 
 1. Copy this entire directory to another location on hard drive
 2. Add your audio source file with the name `input.mp4a` to the base directory
@@ -23,3 +23,14 @@
     4. Add rows for intro art and outro art, if needed
 7. Feed the various files into `ffmpeg` and let it do its thing:
     + `ffmpeg -f concat -i input.txt -i input.m4a -shortest -c:v libx264 -r 1 -pix_fmt yuv420p output.mp4`
+    + `concat -i input.txt -i input.m4a` tells ffmpeg to combine two files into one video. `input.txt` is a file that tells ffmpeg how long to display each image.
+    + `-shortest` limits the length of the video to the shorter of the two `concat` inputs
+
+## Nifty imagemagick tricks
+
++ You can generate a grid with a transparent background from a collection of images:
+    + `montage -density 200 -tile 8x0 -geometry +10+40 -background none *.png grid.png`
+    + `-density 200` sets DPI
+    + `-tile 8x0` sets an 8 column grid with as many rows as needed to use all images
+    + `-geometry +10+40` sets the horizontal offset between elements (`+10`) and the vertical offsets between rows (`+40`)
+    + `-background none` forces a transparent background
