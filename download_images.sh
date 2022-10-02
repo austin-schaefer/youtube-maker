@@ -1,11 +1,16 @@
 #!/bin/bash
 
+printf "Enter Scryfall search query: "
+read scryfall_search
+printf "Enter grid arrangement (e.g. 8x0, 9x0, etc.): "
+read grid_arrangement
+
 # Create export directories
 mkdir card_images
 mkdir export_images
 
 # Get list of png files, export to temp file
-python3 scry $1 --print="%{image_uris.png}" > tmp.txt
+python3 scry $scryfall_search --print="%{image_uris.png}" > tmp.txt
 printf "SUCCESS: Got list of card images\n"
 
 # Instantiate variable for card filenames
@@ -36,5 +41,10 @@ do
     printf "    Converted $input_image...\n"
 done
 
-# Done
-printf "SUCCESS: All thumbnails created"
+# Thumbnails created
+printf "SUCCESS: All thumbnails created\n"
+
+# Create grid image
+cd card_images
+montage -density 200 -tile $grid_arrangement -geometry +10+40 -background none *.png grid.png
+printf "SUCCESS: Card grid created\n"
