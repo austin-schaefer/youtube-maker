@@ -1,5 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
+# Fail gracefully
+## Exit on error
+set -o errexit
+## Exit on accessing an unset variable
+set -o nounset
+## Treat any error in pipe command as failing whole command
+set -o pipefail
+
+
+# Prompt for user input
 printf "Enter Scryfall search query: "
 read scryfall_search
 printf "Enter grid arrangement (e.g. 8x0, 9x0, etc.): "
