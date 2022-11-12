@@ -33,3 +33,8 @@
     + `-tile 8x0` sets an 8 column grid with as many rows as needed to use all images
     + `-geometry +10+40` sets the horizontal offset between elements (`+10`) and the vertical offsets between rows (`+40`)
     + `-background none` forces a transparent background
+
+## Scryfall syntax tips
+
++ To show cards in order of printing and exclude silly stuff:
+    + `prefer:oldest order:released direction:asc (-is:digital -is:funny)`
