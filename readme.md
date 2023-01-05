@@ -1,5 +1,3 @@
-**Note**: Does not currently support double-faced cards! Due to limitations of scrycall, DFCs are silently skipped. 
-
 ## Dependencies
 
 + imagemagick
@@ -11,9 +9,9 @@
 
 1. Copy this entire directory to another location on hard drive
 2. Add your audio source file with the name `input.mp4a` to the base directory
-3. Download card images and convert
-    + Pass in your Scryfall search wrapped in double quotes
-    + For example `zsh download_images.sh "e=chk c=w"`
+3. Download card images with `zsh download_images.sh`
+    + Pass in your Scryfall search when prompted
+    + Enter a grid arrangement when prompted
 4. Move the exported images into the base directory
 5. Copy any other images (intro art, tiers, outro art, etc) into the base directory
 6. Customize the input file with timestamps:
