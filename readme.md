@@ -20,7 +20,8 @@
     3. Take the hours, minutes, and seconds and put them into the appropriate column in this [magic timestamp converter](https://docs.google.com/spreadsheets/d/13-hEGxLZX-VANC69xGFfkhFntnr6zFTx5jh2AEuSBHI/edit#gid=0)
     4. Add rows for intro art and outro art, if needed
 7. Feed the various files into `ffmpeg` and let it do its thing:
-    + `ffmpeg -f concat -i input.txt -i input.m4a -c:v libx264 -r 1 -pix_fmt yuv420p output.mp4`
+    + This version trims it to account for transcoding errors: `ffmpeg -f concat -i input.txt -i input.m4a -c:v libx264 -r 1 -pix_fmt yuv420p output.mp4 && ffmpeg -i output.mp4 -t $(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 input.m4a) output_trimmed.mp4`
+    + Or to just generate the video without trimming it: `ffmpeg -f concat -i input.txt -i input.m4a -c:v libx264 -r 1 -pix_fmt yuv420p output.mp4`
     + `concat -i input.txt -i input.m4a` tells ffmpeg to combine two files into one video. `input.txt` is a file that tells ffmpeg how long to display each image.
 
 ## Nifty imagemagick tricks
