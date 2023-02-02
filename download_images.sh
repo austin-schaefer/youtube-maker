@@ -8,14 +8,13 @@ set -o nounset
 ## Treat any error in pipe command as failing whole command
 set -o pipefail
 
-
 # Prompt for user input
 printf "Enter Scryfall search query: "
 read scryfall_search
 printf "Enter grid arrangement (e.g. 8x0, 9x0, etc.): "
 read grid_arrangement
 
-# Create export directories
+# Create export directories and temp directories
 mkdir card_images
 mkdir export_images
 
@@ -57,4 +56,12 @@ printf "SUCCESS: All thumbnails created\n"
 # Create grid image
 cd card_images
 montage -density 200 -tile $grid_arrangement -geometry +10+40 -background none *.png grid.png
-printf "SUCCESS: Card grid created\n"
+convert grid.png -geometry x1400 1400_grid.png
+printf "SUCCESS: Card grids created\n"
+
+# Create composite grid image
+cp 1400_grid.png ..
+cd ..
+magick composite -gravity center 1400_grid.png title_background.png export_images/grid.png
+rm 1400_grid.png
+printf "SUCCESS: Composite grid created\n"
