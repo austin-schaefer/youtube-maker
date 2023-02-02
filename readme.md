@@ -12,17 +12,13 @@
 3. Download card images with `zsh download_images.sh`
     + Pass in your Scryfall search when prompted
     + Enter a grid arrangement when prompted
-4. Move the exported images into the base directory
-5. Copy any other images (intro art, tiers, outro art, etc) into the base directory
-6. Customize the input file with timestamps:
+3. Ensure any other images you need are in `export_images`
+4. Customize the input file with timestamps:
     1. Get the timestamps from [the show notes](https://docs.google.com/document/d/1orAWZR47FIf75NXiHd4Wd-EaKVp_-poQx1sZIxpmByI/edit#heading=h.s99njdxgxizg)
     2. Copy out just the times into VS Code and add a `00:` to the front of any card without an hour timestamp on it
     3. Take the hours, minutes, and seconds and put them into the appropriate column in this [magic timestamp converter](https://docs.google.com/spreadsheets/d/13-hEGxLZX-VANC69xGFfkhFntnr6zFTx5jh2AEuSBHI/edit#gid=0)
     4. Add rows for intro art and outro art, if needed
-7. Feed the various files into `ffmpeg` and let it do its thing:
-    + This version trims it to account for transcoding errors: `ffmpeg -f concat -i input.txt -i input.m4a -c:v libx264 -r 1 -pix_fmt yuv420p output.mp4 && ffmpeg -i output.mp4 -t $(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 input.m4a) output_trimmed.mp4`
-    + Or to just generate the video without trimming it: `ffmpeg -f concat -i input.txt -i input.m4a -c:v libx264 -r 1 -pix_fmt yuv420p output.mp4`
-    + `concat -i input.txt -i input.m4a` tells ffmpeg to combine two files into one video. `input.txt` is a file that tells ffmpeg how long to display each image.
+5. Create the video with `zsh create_video.sh`
 
 ## Nifty imagemagick tricks
 
@@ -32,6 +28,13 @@
     + `-tile 8x0` sets an 8 column grid with as many rows as needed to use all images
     + `-geometry +10+40` sets the horizontal offset between elements (`+10`) and the vertical offsets between rows (`+40`)
     + `-background none` forces a transparent background
+
+## ffmpeg notes
+
++ `concat -i input.txt -i input.m4a` tells ffmpeg to combine two files into one video. `input.txt` is a file that tells ffmpeg how long to display each image.
++ This generates the video: `ffmpeg -f concat -i input.txt -i input.m4a -c:v libx264 -r 1 -pix_fmt yuv420p output.mp4`
++ However, due to the way ffmpeg handles files with low frame rates, this version of the video will be padded with silence at the end.
++ This command trims it to account for transcoding errors: `ffmpeg -i output.mp4 -t $(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 input.m4a) output_trimmed.mp4`
 
 ## Scryfall syntax tips
 
