@@ -1,3 +1,5 @@
+A collection of scripts to automatically generate YouTube videos for the [Clock Spinning podcast](https://clockspinning.com/). 
+
 ## Dependencies
 
 + imagemagick
@@ -10,14 +12,15 @@
 1. Copy this entire directory to another location on hard drive
 2. Add your audio source file with the name `input.mp4a` to the base directory
 3. Download card images with `zsh download_images.sh`
-    + Pass in your Scryfall search when prompted
+    + Enter your Scryfall search when prompted
     + Enter a grid arrangement when prompted
 3. Ensure any other images you need are in `export_images`
 4. Customize the input file with timestamps:
-    1. Get the timestamps from [the show notes](https://docs.google.com/document/d/1orAWZR47FIf75NXiHd4Wd-EaKVp_-poQx1sZIxpmByI/edit#heading=h.s99njdxgxizg)
+    1. Get the timestamps from the show notes
     2. Copy out just the times into VS Code and add a `00:` to the front of any card without an hour timestamp on it
     3. Take the hours, minutes, and seconds and put them into the appropriate column in this [magic timestamp converter](https://docs.google.com/spreadsheets/d/13-hEGxLZX-VANC69xGFfkhFntnr6zFTx5jh2AEuSBHI/edit#gid=0)
     4. Add rows for intro art and outro art, if needed
+    5. Paste the output of that file into `input.txt`
 5. Create the video with `zsh create_video.sh`
 
 ## Nifty imagemagick tricks
