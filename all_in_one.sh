@@ -37,9 +37,9 @@ for card_image in "${(@f)"$(<tmp.txt)"}"
   let count=count+1
 }
 
-if [[ "$include_card_art" == "Y" ]] ; then
+if [[ "$include_card_art" == "Y" | "$include_card_art" == "y" ]] ; then
     printf "Card art is true"
-elif [[ "$include_card_art" == "N" ]] ; then
+elif [[ "$include_card_art" == "N" | "$include_card_art" == "n" ]] ; then
     printf "Card art is false"
 fi
 

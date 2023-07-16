@@ -13,6 +13,8 @@ printf "Enter Scryfall search query: "
 read scryfall_search
 printf "Enter grid arrangement (e.g. 8x0, 9x0, etc.): "
 read grid_arrangement
+printf "Add card art images? Enter Y or N: "
+read include_card_art
 
 # Create export directories and temp directories
 mkdir card_images
@@ -34,6 +36,12 @@ for card_image in "${(@f)"$(<tmp.txt)"}"
   printf "    Downloaded $card_image - $card_numbers\n"
   let count=count+1
 }
+
+if [[ "$include_card_art" == "Y" | "$include_card_art" == "y" ]] ; then
+    printf "Card art is true"
+elif [[ "$include_card_art" == "N" | "$include_card_art" == "n" ]] ; then
+    printf "Card art is false"
+fi
 
 # Cleanup tmp.txt and update status
 rm tmp.txt
