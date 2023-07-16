@@ -37,6 +37,12 @@ for card_image in "${(@f)"$(<tmp.txt)"}"
   let count=count+1
 }
 
+if [[ "$include_card_art" == "Y" ]] ; then
+    printf "Card art is true"
+elif [[ "$include_card_art" == "N" ]] ; then
+    printf "Card art is false"
+fi
+
 # Cleanup tmp.txt and update status
 rm tmp.txt
 printf "SUCCESS: Downloaded all card images\n"
