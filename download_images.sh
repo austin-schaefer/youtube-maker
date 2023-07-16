@@ -9,11 +9,11 @@ set -o nounset
 set -o pipefail
 
 # Prompt for user input
-printf "Enter Scryfall search query: "
+printf "> Enter Scryfall search query: "
 read scryfall_search
-printf "Enter grid arrangement (e.g. 8x0, 9x0, etc.): "
+printf "> Enter grid arrangement (e.g. 8x0, 9x0, etc.): "
 read grid_arrangement
-printf "Add card art images? Enter Y or N: "
+printf "> Add card art images? Enter Y or N: "
 read include_card_art
 printf "\n"
 
@@ -34,6 +34,7 @@ printf "SUCCESS: Got list of card images\n\n"
 card_count=1
 
 # Download images of all cards
+printf "START: Downloading all card images\n"
 for card_image in "${(@f)"$(<temp_card_images.txt)"}"
 {
     sleep 0.11
@@ -47,11 +48,13 @@ rm temp_card_images.txt
 printf "SUCCESS: Downloaded all card images\n\n"
 
 # Get art using same logic, if user selected
+
 if [[ "$include_card_art" == "Y" ]] ; then
     # Get list of art images, export to temp file
     python3 scry $scryfall_search --print="%{image_uris.art_crop}" > temp_art_images.txt
     printf "SUCCESS: Got list of art images\n\n"
-    
+    printf "START: Download all art images\n"
+
     # Instantiate variable for art filenames
     art_count=1
     
@@ -71,6 +74,7 @@ if [[ "$include_card_art" == "Y" ]] ; then
     # Resize all art to consistent size
     # It looks messy, but basically it just reads width and height
     # And then applies appropriate imagemagick syntax based on those
+    printf "START: Resizing art images\n"
     for input_art in ./images_art/*
     {
         # Create variable to set same filename as source image
@@ -89,7 +93,6 @@ if [[ "$include_card_art" == "Y" ]] ; then
         fi
         printf "    Resized art $input_art...\n"
     }
-
     printf "SUCCESS: Resized all art images\n\n"
 elif [[ "$include_card_art" == "N" ]] ; then
     printf "NOTE: Card art is N, skipping art download\n\n"
@@ -98,17 +101,19 @@ fi
 # Create export images, w/ or w/o art
 if [[ "$include_card_art" == "Y" ]] ; then
     # Loop through images and merge
+    printf "START: Creating export images\n"
     for input_image in ./images_card/*
     {
         # Create variable to set same filename as source image
         export_filename=$(printf "$input_image" | sed 's@./images_card/@@')
         # printf "    $export_filename\n"
         magick composite -geometry +180+200 $input_image resources/card_and_art_background.png images_export/$export_filename
-        printf "    Converted $input_image...\n"
+        printf "    Overlayed image $input_image...\n"
     }
     printf "SUCCESS: All export images created\n\n"
 
     # Loop through card art images and merge
+    printf "START: Adding art to export images\n"
     for input_image in ./images_resized_art/*
     {
         # Create variable to set same filename as source image
@@ -129,13 +134,14 @@ if [[ "$include_card_art" == "Y" ]] ; then
     printf "SUCCESS: All art export images created\n\n"
 elif [[ "$include_card_art" == "N" ]] ; then
     # Loop through card images and merge
+    printf "START: Creating export images\n"
     for input_image in ./images_card/*
     {
         # Create variable to set same filename as source image
         export_filename=$(printf "$input_image" | sed 's@./images_card/@@')
         # Export final image
         magick composite -geometry +1632+200 $input_image resources/card_only_background.png images_export/$export_filename
-        printf "    Converted $input_image...\n"
+        printf "    Overlayed image $input_image...\n"
     }
     printf "SUCCESS: All export images created\n\n"
 fi
@@ -149,16 +155,12 @@ printf "SUCCESS: Card grid created\n\n"
 grid_width=$(identify -ping -format '%w' grid.png)
 grid_height=$(identify -ping -format '%h' grid.png)
 if (( $grid_width > 2500 && $grid_height > 1400)) ; then
-    printf "Wider than 2500 and taller than 1400, converting\n"
     convert grid.png -geometry 2500x1400 grid_resized.png
 elif (( $grid_width > 2500 )) ; then
-    printf "Wider than 2500, converting\n"
     convert grid.png -geometry 2500 grid_resized.png
 elif (( $grid_height > 1400 )) ; then
-    printf "Taller than 1400, converting\n"
     convert grid.png -geometry x1400 grid_resized.png
 elif (( $grid_width < 2501 && $grid_height < 1401 )) ; then
-    printf "Narrower than 2500 and shorter than 1400, converting\n"
     convert grid.png -geometry 2500x1400 grid_resized.png
 fi 
 
