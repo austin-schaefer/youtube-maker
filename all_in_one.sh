@@ -13,6 +13,8 @@ printf "Enter Scryfall search query: "
 read scryfall_search
 printf "Enter grid arrangement (e.g. 8x0, 9x0, etc.): "
 read grid_arrangement
+printf "Add card art images? Enter Y or N: "
+read include_card_art
 
 # Create export directories and temp directories
 mkdir card_images
