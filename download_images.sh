@@ -57,11 +57,11 @@ if [[ "$include_card_art" == "Y" ]] ; then
     # Download images of all art
     for art_image in "${(@f)"$(<temp_art_images.txt)"}"
     {
-      sleep 0.11
-      printf -v art_numbers "%05d" $art_count
-      wget -q -O ./images_art/$art_numbers.png $art_image
-      printf "    Downloaded $art_image - $art_numbers\n"
-      let art_count=art_count+1
+        sleep 0.11
+        printf -v art_numbers "%05d" $art_count
+        wget -q -O ./images_art/$art_numbers.png $art_image
+        printf "    Downloaded $art_image - $art_numbers\n"
+        let art_count=art_count+1
     }
     # Cleanup temp_art_images.txt and update status
     rm temp_art_images.txt
@@ -70,19 +70,24 @@ elif [[ "$include_card_art" == "N" ]] ; then
     printf "NOTE: Card art is N, skipping download\n"
 fi
 
-# Loop through images and merge
-for input_image in ./images_card/*
-do
-    # printf "    $input_image\n"
-    # Create variable to set same filename as source image
-    export_filename=$(printf "$input_image" | sed 's@./images_card/@@')
-    # printf "    $export_filename\n"
-    magick composite -geometry +1632+200 $input_image resources/card_background.png images_export/$export_filename
-    printf "    Converted $input_image...\n"
-done
+# Create export images
+if [[ "$include_card_art" == "Y" ]] ; then
+    printf "Whatevs\n"
+elif [[ "$include_card_art" == "N" ]] ; then
+    # Loop through images and merge
+    for input_image in ./images_card/*
+    {
+        # printf "    $input_image\n"
+        # Create variable to set same filename as source image
+        export_filename=$(printf "$input_image" | sed 's@./images_card/@@')
+        # printf "    $export_filename\n"
+        magick composite -geometry +1632+200 $input_image resources/card_background.png images_export/$export_filename
+        printf "    Converted $input_image...\n"
+    }
+    # Exports created
+    printf "SUCCESS: All export images created\n"
+fi
 
-# Thumbnails created
-printf "SUCCESS: All thumbnails created\n"
 
 # Create grid image
 cd images_card
