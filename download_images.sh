@@ -15,6 +15,7 @@ printf "Enter grid arrangement (e.g. 8x0, 9x0, etc.): "
 read grid_arrangement
 printf "Add card art images? Enter Y or N: "
 read include_card_art
+printf "\n"
 
 # Create export directories and temp directories
 mkdir images_card
@@ -23,32 +24,51 @@ if [[ "$include_card_art" == "Y" ]] ; then
     mkdir images_art
 fi
 
-# Get list of png files, export to temp file
-python3 scry $scryfall_search --print="%{image_uris.png}" > tmp.txt
+# Get list of card images, export to temp file
+python3 scry $scryfall_search --print="%{image_uris.png}" > temp_card_images.txt
 printf "SUCCESS: Got list of card images\n"
 
 # Instantiate variable for card filenames
-count=1
+card_count=1
 
 # Download images of all cards
-for card_image in "${(@f)"$(<tmp.txt)"}"
+for card_image in "${(@f)"$(<temp_card_images.txt)"}"
 {
   sleep 0.11
-  printf -v card_numbers "%05d" $count
+  printf -v card_numbers "%05d" $card_count
   wget -q -O ./images_card/$card_numbers.png $card_image
   printf "    Downloaded $card_image - $card_numbers\n"
-  let count=count+1
+  let card_count=card_count+1
 }
 
-if [[ "$include_card_art" == "Y" ]] ; then
-    printf "Card art is true"
-elif [[ "$include_card_art" == "N" ]] ; then
-    printf "Card art is false"
-fi
-
-# Cleanup tmp.txt and update status
-rm tmp.txt
+# Cleanup temp_card_images.txt and update status
+rm temp_card_images.txt
 printf "SUCCESS: Downloaded all card images\n"
+
+# Get art using same logic, if user selected
+if [[ "$include_card_art" == "Y" ]] ; then
+    # Get list of art images, export to temp file
+    python3 scry $scryfall_search --print="%{image_uris.art_crop}" > temp_art_images.txt
+    printf "SUCCESS: Got list of art images\n"
+    
+    # Instantiate variable for art filenames
+    art_count=1
+    
+    # Download images of all art
+    for art_image in "${(@f)"$(<temp_art_images.txt)"}"
+    {
+      sleep 0.11
+      printf -v art_numbers "%05d" $art_count
+      wget -q -O ./images_art/$art_numbers.png $art_image
+      printf "    Downloaded $art_image - $art_numbers\n"
+      let art_count=art_count+1
+    }
+    # Cleanup temp_art_images.txt and update status
+    rm temp_art_images.txt
+    printf "SUCCESS: Downloaded all art images\n"
+elif [[ "$include_card_art" == "N" ]] ; then
+    printf "NOTE: Card art is N, skipping download\n"
+fi
 
 # Loop through images and merge
 for input_image in ./images_card/*
