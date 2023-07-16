@@ -22,6 +22,7 @@ mkdir images_card
 mkdir images_export
 if [[ "$include_card_art" == "Y" ]] ; then
     mkdir images_art
+    mkdir images_resized_art
 fi
 
 # Get list of card images, export to temp file
@@ -37,7 +38,7 @@ for card_image in "${(@f)"$(<temp_card_images.txt)"}"
     sleep 0.11
     printf -v card_numbers "%05d" $card_count
     wget -q -O ./images_card/$card_numbers.png $card_image
-    printf "    Downloaded $card_image - $card_numbers\n"
+    printf "    Downloaded card: $card_image - $card_numbers\n"
     let card_count=card_count+1
 }
 
@@ -60,12 +61,34 @@ if [[ "$include_card_art" == "Y" ]] ; then
         sleep 0.11
         printf -v art_numbers "%05d" $art_count
         wget -q -O ./images_art/$art_numbers.png $art_image
-        printf "    Downloaded $art_image - $art_numbers\n"
+        printf "    Downloaded art: $art_image - $art_numbers\n"
         let art_count=art_count+1
     }
     # Cleanup temp_art_images.txt and update status
     rm temp_art_images.txt
     printf "SUCCESS: Downloaded all art images\n"
+
+    # Resize all art to consistent size
+    # It looks messy, but basically it just reads width and height
+    # And then applies appropriate imagemagick syntax based on those
+    for input_art in ./images_art/*
+    {
+        # Create variable to set same filename as source image
+        export_art_filename=$(printf "$input_art" | sed 's@./images_art/@@')
+        # printf "    $export_filename\n"
+        grid_width=$(identify -ping -format '%w' $input_art)
+        grid_height=$(identify -ping -format '%h' $input_art)
+        if (( $grid_width > 1142 && $grid_height > 920)) ; then
+            convert $input_art -geometry 1142x920 images_resized_art/$export_art_filename
+        elif (( $grid_width > 1142 )) ; then
+            convert $input_art -geometry 1142 images_resized_art/$export_art_filename
+        elif (( $grid_height > 920 )) ; then
+            convert $input_art -geometry x920 images_resized_art/$export_art_filename
+        elif (( $grid_width < 1143 && $grid_height < 921 )) ; then\
+            convert $input_art -geometry 1142x920 images_resized_art/$export_art_filename
+        fi
+        printf "    Resized art $input_art...\n"
+    }
 elif [[ "$include_card_art" == "N" ]] ; then
     printf "NOTE: Card art is N, skipping download\n"
 fi
@@ -77,7 +100,6 @@ elif [[ "$include_card_art" == "N" ]] ; then
     # Loop through images and merge
     for input_image in ./images_card/*
     {
-        # printf "    $input_image\n"
         # Create variable to set same filename as source image
         export_filename=$(printf "$input_image" | sed 's@./images_card/@@')
         # printf "    $export_filename\n"
@@ -87,7 +109,6 @@ elif [[ "$include_card_art" == "N" ]] ; then
     # Exports created
     printf "SUCCESS: All export images created\n"
 fi
-
 
 # Create grid image
 cd images_card
