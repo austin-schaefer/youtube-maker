@@ -19,6 +19,9 @@ read include_card_art
 # Create export directories and temp directories
 mkdir card_images
 mkdir export_images
+if [[ "$include_card_art" == "Y" ]] ; then
+    mkdir art_images
+fi
 
 # Get list of png files, export to temp file
 python3 scry $scryfall_search --print="%{image_uris.png}" > tmp.txt
@@ -37,9 +40,9 @@ for card_image in "${(@f)"$(<tmp.txt)"}"
   let count=count+1
 }
 
-if [[ "$include_card_art" == "Y" | "$include_card_art" == "y" ]] ; then
+if [[ "$include_card_art" == "Y" ]] ; then
     printf "Card art is true"
-elif [[ "$include_card_art" == "N" | "$include_card_art" == "n" ]] ; then
+elif [[ "$include_card_art" == "N" ]] ; then
     printf "Card art is false"
 fi
 
