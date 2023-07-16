@@ -92,12 +92,28 @@ fi
 # Create grid image
 cd images_card
 montage -density 200 -tile $grid_arrangement -geometry +10+40 -background none *.png grid.png
-convert grid.png -geometry x1400 1400_grid.png
-printf "SUCCESS: Card grids created\n"
+printf "SUCCESS: Card grid created\n"
+
+# Resize grid image conditionally based on size
+grid_width=$(identify -ping -format '%w' grid.png)
+grid_height=$(identify -ping -format '%h' grid.png)
+if (( $grid_width > 2500 && $grid_height > 1400)) ; then
+    printf "Wider than 2500 and taller than 1400, converting\n"
+    convert grid.png -geometry 2500x1400 grid_resized.png
+elif (( $grid_width > 2500 )) ; then
+    printf "Wider than 2500, converting\n"
+    convert grid.png -geometry 2500 grid_resized.png
+elif (( $grid_height > 1400 )) ; then
+    printf "Taller than 1400, converting\n"
+    convert grid.png -geometry x1400 grid_resized.png
+elif (( $grid_width < 2501 && $grid_height < 1401 )) ; then
+    printf "Narrower than 2500 and shorter than 1400, converting\n"
+    convert grid.png -geometry 2500x1400 grid_resized.png
+fi 
 
 # Create composite grid image
-cp 1400_grid.png ..
+cp grid_resized.png ..
 cd ..
-magick composite -gravity center 1400_grid.png resources/title_background.png images_export/grid.png
-rm 1400_grid.png
+magick composite -gravity center grid_resized.png resources/title_background.png images_export/grid.png
+rm grid_resized.png
 printf "SUCCESS: Composite grid created\n"
