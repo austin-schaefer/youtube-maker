@@ -93,6 +93,10 @@ if [[ "$include_card_art" == "Y" ]] ; then
         fi
         printf "    Resized art $input_art...\n"
     }
+        
+    # Remove original export directory and rename
+    rm -rf images_art
+    mv images_resized_art images_art
     printf "SUCCESS: Resized all art images\n\n"
 elif [[ "$include_card_art" == "N" ]] ; then
     printf "NOTE: Card art is N, skipping art download\n\n"
@@ -114,10 +118,10 @@ if [[ "$include_card_art" == "Y" ]] ; then
 
     # Loop through card art images and merge
     printf "START: Adding art to export images\n"
-    for input_image in ./images_resized_art/*
+    for input_image in ./images_art/*
     {
         # Create variable to set same filename as source image
-        export_filename=$(printf "$input_image" | sed 's@./images_resized_art/@@')
+        export_filename=$(printf "$input_image" | sed 's@./images_art/@@')
         # Read image height and do some math to align it properly
         image_width=$(identify -ping -format '%w' $input_image)
         image_height=$(identify -ping -format '%h' $input_image)
