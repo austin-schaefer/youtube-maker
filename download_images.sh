@@ -34,11 +34,11 @@ card_count=1
 # Download images of all cards
 for card_image in "${(@f)"$(<temp_card_images.txt)"}"
 {
-  sleep 0.11
-  printf -v card_numbers "%05d" $card_count
-  wget -q -O ./images_card/$card_numbers.png $card_image
-  printf "    Downloaded $card_image - $card_numbers\n"
-  let card_count=card_count+1
+    sleep 0.11
+    printf -v card_numbers "%05d" $card_count
+    wget -q -O ./images_card/$card_numbers.png $card_image
+    printf "    Downloaded $card_image - $card_numbers\n"
+    let card_count=card_count+1
 }
 
 # Cleanup temp_card_images.txt and update status
